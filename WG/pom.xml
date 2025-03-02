@@ -18,6 +18,10 @@
 			<id>sk89q-repo</id>
 			<url>https://maven.enginehub.org/repo/</url>
 		</repository>
+		<repository>
+			<id>devmart-other</id>
+			<url>https://nexuslite.gcnt.net/repos/other/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -50,6 +54,12 @@
 			<artifactId>worldguard-bukkit</artifactId>
 			<version>7.0.6</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tcoded</groupId>
+			<artifactId>FoliaLib</artifactId>
+			<version>0.2.3</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

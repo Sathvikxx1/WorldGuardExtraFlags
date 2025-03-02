@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.util.Location;
@@ -19,8 +20,12 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 
+import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
+import com.sk89q.worldguard.session.handler.Handler;
+import com.tcoded.folialib.wrapper.WrappedTask;
 import net.goldtreeservers.worldguardextraflags.flags.Flags;
 import net.goldtreeservers.worldguardextraflags.flags.data.SoundData;
+import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
 
 public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>>
 {
@@ -46,7 +51,7 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
     }
 
 	private final Plugin plugin;
-    private Map<String, BukkitRunnable> runnables;
+	private Map<String, WrappedRunnable> runnables;
 	    
 	protected PlaySoundsFlagHandler(Plugin plugin, Session session)
 	{
@@ -93,34 +98,47 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
 			{
 				if (!this.runnables.containsKey(sound.sound()))
 				{
-					BukkitRunnable runnable = new BukkitRunnable()
+					WrappedRunnable runnable = new WrappedRunnable()
 					{
+						private WrappedTask wrappedTask;
+
 						@Override
 						public void run()
 						{
 							bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.sound(), sound.source(), sound.volume(), sound.pitch());
 						}
-						
+
 						@Override
-						public void cancel()
-						{
-							super.cancel();
+						public void cancel() {
+							if (wrappedTask != null) {
+								wrappedTask.cancel();
+							}
 
 							bukkitPlayer.stopSound(sound.sound(), sound.source());
 						}
+
+						@Override
+						public void setWrappedTask(WrappedTask wrappedTask) {
+							this.wrappedTask = wrappedTask;
+						}
 					};
-	
+
+					WrappedTask wrappedTask = WorldGuardUtils.getScheduler().getImpl().runAtEntityTimer(
+							bukkitPlayer,
+							runnable,
+							1L, sound.interval() * 50L, TimeUnit.MILLISECONDS
+					);
+					runnable.setWrappedTask(wrappedTask);
+
 					this.runnables.put(sound.sound(), runnable);
-					
-					runnable.runTaskTimer(this.plugin, 0L, sound.interval());
 				}
 			}
 		}
 		
-		Iterator<Entry<String, BukkitRunnable>> runnables = this.runnables.entrySet().iterator();
+		Iterator<Entry<String, WrappedRunnable>> runnables = this.runnables.entrySet().iterator();
 		while (runnables.hasNext())
 		{
-			Entry<String, BukkitRunnable> runnable = runnables.next();
+			Entry<String, WrappedRunnable> runnable = runnables.next();
 			
 			if (value != null && value.size() > 0)
 			{
@@ -144,5 +162,15 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
 			
 			runnables.remove();
 		}
+	}
+
+	interface WrappedRunnable extends Runnable {
+
+		void cancel();
+
+		@Override
+		void run();
+
+		void setWrappedTask(WrappedTask wrappedTask);
 	}
 }

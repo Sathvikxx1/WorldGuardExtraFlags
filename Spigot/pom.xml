@@ -32,6 +32,10 @@
 							<pattern>org.bstats</pattern>
 							<shadedPattern>net.goldtreeservers.worldguardextraflags.bstats</shadedPattern>
 						</relocation>
+						<relocation>
+							<pattern>com.tcoded.folialib</pattern>
+							<shadedPattern>net.goldtreeservers.worldguardextraflags.folialib</shadedPattern>
+						</relocation>
 					</relocations>
 					<filters>
 						<filter>

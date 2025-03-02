@@ -16,6 +16,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.session.SessionManager;
 import net.goldtreeservers.worldguardextraflags.listeners.*;
+import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
 import net.goldtreeservers.worldguardextraflags.wg.handlers.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.World;
@@ -112,6 +113,8 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
+		WorldGuardUtils.initializeScheduler(this);
+
 		this.regionContainer = this.worldGuard.getPlatform().getRegionContainer();
 		this.sessionManager = this.worldGuard.getPlatform().getSessionManager();
 

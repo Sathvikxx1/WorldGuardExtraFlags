@@ -3,6 +3,7 @@ description: Adds more flags to WorldGuard to help manage your server easily!
 
 version: 4.2.5-SNAPSHOT
 api-version: 1.13
+folia-supported: true
 
 author: isokissa3
 website: https://joniaromaa.fi
