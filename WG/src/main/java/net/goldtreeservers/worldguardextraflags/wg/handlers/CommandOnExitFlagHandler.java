@@ -1,6 +1,8 @@
 package net.goldtreeservers.worldguardextraflags.wg.handlers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -19,7 +21,7 @@ import net.goldtreeservers.worldguardextraflags.flags.Flags;
 
 public class CommandOnExitFlagHandler extends Handler
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}
@@ -73,7 +75,7 @@ public class CommandOnExitFlagHandler extends Handler
 		{
 			for (Set<String> commands_ : lastCommands)
 			{
-				if (!commands.contains(commands_) && commands_.size() > 0)
+				if (!commands.contains(commands_) && !commands_.isEmpty())
 				{
 					for (String command : commands_)
 					{

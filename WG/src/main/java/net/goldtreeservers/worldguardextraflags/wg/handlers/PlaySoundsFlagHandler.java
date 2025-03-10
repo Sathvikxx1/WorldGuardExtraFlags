@@ -12,24 +12,21 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 
-import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
-import com.sk89q.worldguard.session.handler.Handler;
-import com.tcoded.folialib.wrapper.WrappedTask;
 import net.goldtreeservers.worldguardextraflags.flags.Flags;
 import net.goldtreeservers.worldguardextraflags.flags.data.SoundData;
 import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
 
 public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>>
 {
-	public static final Factory FACTORY(Plugin plugin)
+	public static Factory FACTORY(Plugin plugin)
 	{
 		return new Factory(plugin);
 	}
@@ -50,16 +47,13 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
         }
     }
 
-	private final Plugin plugin;
-	private Map<String, WrappedRunnable> runnables;
+    private final Map<String, WrappedRunnable> runnables;
 	    
 	protected PlaySoundsFlagHandler(Plugin plugin, Session session)
 	{
 		super(session, Flags.PLAY_SOUNDS);
 
-		this.plugin = plugin;
-		
-		this.runnables = new HashMap<>();
+        this.runnables = new HashMap<>();
 	}
 
 	@Override
@@ -92,7 +86,7 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
 	{
 		Player bukkitPlayer = ((BukkitPlayer) player).getPlayer();
 
-		if (value != null && value.size() > 0)
+		if (value != null && !value.isEmpty())
 		{
 			for(SoundData sound : value)
 			{

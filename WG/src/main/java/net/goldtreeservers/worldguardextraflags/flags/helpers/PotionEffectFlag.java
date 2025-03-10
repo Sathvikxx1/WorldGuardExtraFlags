@@ -18,7 +18,7 @@ public class PotionEffectFlag extends Flag<PotionEffect>
 	
 	public PotionEffectFlag(String name)
 	{
-		super(name);
+		super (name);
 	}
 
 	@Override

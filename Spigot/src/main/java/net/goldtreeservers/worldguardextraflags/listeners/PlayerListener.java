@@ -40,8 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PlayerListener implements Listener
-{
+public class PlayerListener implements Listener {
 	private final WorldGuardExtraFlagsPlugin plugin;
 
 	private final WorldGuardPlugin worldGuardPlugin;
@@ -160,12 +159,12 @@ public class PlayerListener implements Listener
 			Boolean value = wgSession.getHandler(FlyFlagHandler.class).getCurrentValue();
 			if (value != null)
 			{
-				WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, () -> checkFlyStatus(player, player.getAllowFlight()));
+				WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, (task) -> checkFlyStatus(player, player.getAllowFlight()));
 			}
 		}
 		else
 		{
-			WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, () -> checkFlyStatus(player, null));
+			WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, (task) -> checkFlyStatus(player, null));
 		}
 	}
 	

@@ -16,8 +16,7 @@ import net.goldtreeservers.worldguardextraflags.we.handlers.WorldEditFlagHandler
 import org.bukkit.Bukkit;
 
 @RequiredArgsConstructor
-public class WorldEditListener
-{
+public class WorldEditListener {
 	private final WorldGuardPlugin worldGuardPlugin;
 	private final RegionContainer regionContainer;
 	private final SessionManager sessionManager;

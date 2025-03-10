@@ -17,7 +17,7 @@ import net.goldtreeservers.worldguardextraflags.flags.helpers.ForcedStateFlag.Fo
 
 public class GlideFlagHandler extends FlagValueChangeHandler<ForcedState>
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}
@@ -69,7 +69,7 @@ public class GlideFlagHandler extends FlagValueChangeHandler<ForcedState>
 				return;
 			}
 			
-			boolean value = (state == ForcedState.FORCE ? true : false);
+			boolean value = (state == ForcedState.FORCE);
 			
 			if (bukkitPlayer.isGliding() != value)
 			{

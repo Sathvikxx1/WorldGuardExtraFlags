@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
@@ -19,23 +18,20 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 
 import lombok.Getter;
 import net.goldtreeservers.worldguardextraflags.flags.Flags;
 import net.goldtreeservers.worldguardextraflags.flags.data.PotionEffectDetails;
-import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
 
 public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEffect>>
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}
@@ -49,10 +45,10 @@ public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEff
         }
     }
 
-	private Map<PotionEffectType, PotionEffectDetails> removedEffects;
-    private Set<PotionEffectType> givenEffects;
+	private final Map<PotionEffectType, PotionEffectDetails> removedEffects;
+    private final Set<PotionEffectType> givenEffects;
     
-    @Getter private boolean supressRemovePotionPacket;
+    @Getter private boolean suppressRemovePotionPacket;
     
 	protected GiveEffectsFlagHandler(Session session)
 	{
@@ -108,7 +104,7 @@ public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEff
 						}
 					}
 					
-					this.supressRemovePotionPacket = effect_ != null && effect_.getAmplifier() == effect.getAmplifier();
+					this.suppressRemovePotionPacket = effect_ != null && effect_.getAmplifier() == effect.getAmplifier();
 	
 					if (this.givenEffects.add(effect.getType()) && effect_ != null)
 					{
@@ -122,7 +118,7 @@ public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEff
 			}
 			finally
 			{
-				this.supressRemovePotionPacket = false;
+				this.suppressRemovePotionPacket = false;
 			}
 		}
 		
@@ -131,7 +127,7 @@ public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEff
 		{
 			PotionEffectType type = effectTypes.next();
 			
-			if (value != null && value.size() > 0)
+			if (value != null && !value.isEmpty())
 			{
 				boolean skip = false;
 				for (PotionEffect effect : value)
@@ -167,7 +163,7 @@ public class GiveEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEff
 					
 					if (timeLeft > 0)
 					{
-						bukkitPlayer.addPotionEffect(new PotionEffect(effect.getKey(), timeLeft, removedEffect.getAmplifier(), removedEffect.isAmbient(), removedEffect.isParticles()), true);
+						bukkitPlayer.addPotionEffect(new PotionEffect(effect.getKey(), timeLeft, removedEffect.amplifier(), removedEffect.ambient(), removedEffect.particles()), true);
 					}
 				}
 				

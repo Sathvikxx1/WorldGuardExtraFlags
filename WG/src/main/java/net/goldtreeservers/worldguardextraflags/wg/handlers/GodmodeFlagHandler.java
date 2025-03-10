@@ -1,13 +1,9 @@
 package net.goldtreeservers.worldguardextraflags.wg.handlers;
 
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
@@ -19,7 +15,7 @@ import net.goldtreeservers.worldguardextraflags.flags.Flags;
 
 public class GodmodeFlagHandler extends FlagValueChangeHandler<State>
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}

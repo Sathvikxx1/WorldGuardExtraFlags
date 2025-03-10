@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.tcoded.folialib.FoliaLib;
+import lombok.Getter;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -15,7 +17,8 @@ public class WorldGuardUtils
 {
 	public static final String PREVENT_TELEPORT_LOOP_META = "WGEFP: TLP";
 
-	private static FoliaLib scheduler;
+    @Getter
+    private static FoliaLib scheduler;
 
 	public static void initializeScheduler(JavaPlugin plugin) {
 		Objects.requireNonNull(plugin, "plugin cannot be null!");
@@ -36,24 +39,15 @@ public class WorldGuardUtils
 			
 			player.setMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, result);
 
-			getScheduler().getImpl().runAtEntity(player, () -> player.removeMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, plugin));
+			getScheduler().getImpl().runAtEntity(player, (task) -> player.removeMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, plugin));
 		}
 		
-		Set<Object> set = (Set<Object>)result.value();
+		Set<Object> set = (Set<Object>) result.value();
 		if (set.add(location))
 		{
 			return true;
 		}
 
 		return false;
-	}
-
-	/**
-	 * Get the publicly accessible scheduler instance.
-	 *
-	 * @return {@link FoliaLib} instance.
-	 */
-	public static FoliaLib getScheduler() {
-		return scheduler;
 	}
 }

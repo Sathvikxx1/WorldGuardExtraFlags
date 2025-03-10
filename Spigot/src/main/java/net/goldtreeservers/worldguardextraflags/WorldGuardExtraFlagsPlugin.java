@@ -222,7 +222,7 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 			{
 				flags.add((Flag<?>)field.get(null));
 			}
-			catch (IllegalArgumentException | IllegalAccessException e)
+			catch (IllegalArgumentException | IllegalAccessException ignored)
 			{
 			}
 		}

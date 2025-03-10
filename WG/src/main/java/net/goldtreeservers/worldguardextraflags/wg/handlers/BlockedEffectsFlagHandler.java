@@ -25,7 +25,7 @@ import net.goldtreeservers.worldguardextraflags.flags.data.PotionEffectDetails;
 
 public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<PotionEffectType>>
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}
@@ -39,7 +39,7 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
         }
     }
 	
-	private HashMap<PotionEffectType, PotionEffectDetails> removedEffects;
+	private final HashMap<PotionEffectType, PotionEffectDetails> removedEffects;
     
 	protected BlockedEffectsFlagHandler(Session session)
 	{
@@ -114,7 +114,7 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
 					int timeLeft = removedEffect.getTimeLeftInTicks();
 					if (timeLeft > 0)
 					{
-						bukkitPlayer.addPotionEffect(new PotionEffect(potionEffect.getKey(), timeLeft, removedEffect.getAmplifier(), removedEffect.isAmbient(), removedEffect.isParticles()), true);
+						bukkitPlayer.addPotionEffect(new PotionEffect(potionEffect.getKey(), timeLeft, removedEffect.amplifier(), removedEffect.ambient(), removedEffect.particles()), true);
 					}
 				}
 				

@@ -19,7 +19,7 @@ import net.goldtreeservers.worldguardextraflags.flags.Flags;
 
 public class FlyFlagHandler extends FlagValueChangeHandler<State>
 {
-	public static final Factory FACTORY()
+	public static Factory FACTORY()
 	{
 		return new Factory();
 	}
