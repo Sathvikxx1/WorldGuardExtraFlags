@@ -12,6 +12,7 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
+import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -83,7 +84,7 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
 			for (PotionEffectType effectType : value)
 			{
 				PotionEffect effect = null;
-				for(PotionEffect activeEffect : bukkitPlayer.getActivePotionEffects())
+				for (PotionEffect activeEffect : bukkitPlayer.getActivePotionEffects())
 				{
 					if (activeEffect.getType().equals(effectType))
 					{
@@ -94,9 +95,9 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
 				
 				if (effect != null)
 				{
-					this.removedEffects.put(effect.getType(), new PotionEffectDetails(System.nanoTime() + (long)(effect.getDuration() / 20D * TimeUnit.SECONDS.toNanos(1L)), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles()));
+					this.removedEffects.put(effect.getType(), new PotionEffectDetails(System.nanoTime() + (long) (effect.getDuration() / 20D * TimeUnit.SECONDS.toNanos(1L)), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles()));
 
-					bukkitPlayer.removePotionEffect(effectType);
+					WorldGuardUtils.getScheduler().getImpl().runAtEntity(bukkitPlayer, (wrappedTask -> bukkitPlayer.removePotionEffect(effectType)));
 				}
 			}
 		}
