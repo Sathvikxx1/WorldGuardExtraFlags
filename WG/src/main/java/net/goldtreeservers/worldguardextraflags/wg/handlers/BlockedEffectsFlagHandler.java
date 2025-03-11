@@ -113,9 +113,8 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
 				if (removedEffect != null)
 				{
 					int timeLeft = removedEffect.getTimeLeftInTicks();
-					if (timeLeft > 0)
-					{
-						bukkitPlayer.addPotionEffect(new PotionEffect(potionEffect.getKey(), timeLeft, removedEffect.amplifier(), removedEffect.ambient(), removedEffect.particles()), true);
+					if (timeLeft > 0) {
+						WorldGuardUtils.getScheduler().getImpl().runAtEntity(bukkitPlayer, (wrappedTask -> bukkitPlayer.addPotionEffect(new PotionEffect(potionEffect.getKey(), timeLeft, removedEffect.amplifier(), removedEffect.ambient(), removedEffect.particles()), true)));
 					}
 				}
 				
