@@ -1,10 +1,10 @@
 package net.goldtreeservers.worldguardextraflags.wg.handlers;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -53,7 +53,7 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
 	{
 		super(session, Flags.PLAY_SOUNDS);
 
-        this.runnables = new HashMap<>();
+        this.runnables = new ConcurrentHashMap<>();
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package net.goldtreeservers.worldguardextraflags.wg.handlers;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -40,13 +40,13 @@ public class BlockedEffectsFlagHandler extends FlagValueChangeHandler<Set<Potion
         }
     }
 	
-	private final HashMap<PotionEffectType, PotionEffectDetails> removedEffects;
+	private final ConcurrentHashMap<PotionEffectType, PotionEffectDetails> removedEffects;
     
 	protected BlockedEffectsFlagHandler(Session session)
 	{
 		super(session, Flags.BLOCKED_EFFECTS);
 		
-		this.removedEffects = new HashMap<>();
+		this.removedEffects = new ConcurrentHashMap<>();
 	}
 
 	@Override
