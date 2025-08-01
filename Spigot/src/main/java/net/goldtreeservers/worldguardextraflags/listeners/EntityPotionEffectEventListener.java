@@ -20,7 +20,7 @@ public class EntityPotionEffectEventListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityPotionEffectEvent(EntityPotionEffectEvent event) {
-		WorldGuardUtils.getScheduler().getImpl().runAtEntity(event.getEntity(), (wrappedTask) -> {
+		WorldGuardUtils.getScheduler().getScheduler().runAtEntity(event.getEntity(), (wrappedTask) -> {
 			if (event.getAction() != EntityPotionEffectEvent.Action.REMOVED || event.getCause() != EntityPotionEffectEvent.Cause.PLUGIN) {
 				return;
 			}

@@ -117,7 +117,7 @@ public class PlaySoundsFlagHandler extends FlagValueChangeHandler<Set<SoundData>
 						}
 					};
 
-					WrappedTask wrappedTask = WorldGuardUtils.getScheduler().getImpl().runAtEntityTimer(
+					WrappedTask wrappedTask = WorldGuardUtils.getScheduler().getScheduler().runAtEntityTimer(
 							bukkitPlayer,
 							runnable,
 							1L, sound.interval() * 50L, TimeUnit.MILLISECONDS

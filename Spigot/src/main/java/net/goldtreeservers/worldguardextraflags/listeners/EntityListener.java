@@ -81,7 +81,7 @@ public class EntityListener implements Listener
 					event.setCancelled(true);
 
 					//Prevent the player from being allowed to glide by spamming space
-					WorldGuardUtils.getScheduler().getImpl().teleportAsync(entity, player.getLocation());
+					WorldGuardUtils.getScheduler().getScheduler().teleportAsync(entity, player.getLocation());
 
 					break;
 				}

@@ -39,15 +39,10 @@ public class WorldGuardUtils
 			
 			player.setMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, result);
 
-			getScheduler().getImpl().runAtEntity(player, (task) -> player.removeMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, plugin));
+			getScheduler().getScheduler().runAtEntity(player, (task) -> player.removeMetadata(WorldGuardUtils.PREVENT_TELEPORT_LOOP_META, plugin));
 		}
 		
 		Set<Object> set = (Set<Object>) result.value();
-		if (set.add(location))
-		{
-			return true;
-		}
-
-		return false;
-	}
+        return set.add(location);
+    }
 }

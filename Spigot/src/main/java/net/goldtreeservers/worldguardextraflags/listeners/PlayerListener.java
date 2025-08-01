@@ -159,12 +159,12 @@ public class PlayerListener implements Listener {
 			Boolean value = wgSession.getHandler(FlyFlagHandler.class).getCurrentValue();
 			if (value != null)
 			{
-				WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, (task) -> checkFlyStatus(player, player.getAllowFlight()));
+				WorldGuardUtils.getScheduler().getScheduler().runAtEntity(player, (task) -> checkFlyStatus(player, player.getAllowFlight()));
 			}
 		}
 		else
 		{
-			WorldGuardUtils.getScheduler().getImpl().runAtEntity(player, (task) -> checkFlyStatus(player, null));
+			WorldGuardUtils.getScheduler().getScheduler().runAtEntity(player, (task) -> checkFlyStatus(player, null));
 		}
 	}
 	

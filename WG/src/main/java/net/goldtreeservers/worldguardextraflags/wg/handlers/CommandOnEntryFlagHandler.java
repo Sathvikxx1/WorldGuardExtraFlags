@@ -56,7 +56,7 @@ public class CommandOnEntryFlagHandler extends Handler
 				if (!this.lastCommands.contains(commands_) && !commands_.isEmpty())
 				{
 					for (String command : commands_) {
-						WorldGuardUtils.getScheduler().getImpl().runNextTick(wrappedTask -> Bukkit.getServer().dispatchCommand(((BukkitPlayer) player).getPlayer(), command.substring(1).replace("%username%", player.getName()))); //TODO: Make this better)
+						WorldGuardUtils.getScheduler().getScheduler().runNextTick(wrappedTask -> Bukkit.getServer().dispatchCommand(((BukkitPlayer) player).getPlayer(), command.substring(1).replace("%username%", player.getName()))); //TODO: Make this better)
 					}
 
 					break;

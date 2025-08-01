@@ -80,7 +80,7 @@ public class CommandOnExitFlagHandler extends Handler
 				{
 					for (String command : commands_)
 					{
-						WorldGuardUtils.getScheduler().getImpl().runNextTick(wrappedTask -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command.substring(1).replace("%username%", player.getName()))); //TODO: Make this better)
+						WorldGuardUtils.getScheduler().getScheduler().runNextTick(wrappedTask -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command.substring(1).replace("%username%", player.getName()))); //TODO: Make this better)
 					}
 
 					break;
