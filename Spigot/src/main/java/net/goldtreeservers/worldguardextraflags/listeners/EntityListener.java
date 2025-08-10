@@ -5,8 +5,10 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.session.SessionManager;
+import net.goldtreeservers.worldguardextraflags.WorldGuardExtraFlagsPlugin;
 import net.goldtreeservers.worldguardextraflags.flags.helpers.ForcedStateFlag;
 import net.goldtreeservers.worldguardextraflags.wg.WorldGuardUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,6 +28,7 @@ public class EntityListener implements Listener
 	private final WorldGuardPlugin worldGuardPlugin;
 	private final RegionContainer regionContainer;
 	private final SessionManager sessionManager;
+	private final WorldGuardExtraFlagsPlugin plugin;
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPortalCreateEvent(PortalCreateEvent event)
@@ -55,50 +58,49 @@ public class EntityListener implements Listener
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onEntityToggleGlideEvent(EntityToggleGlideEvent event)
-	{
+	public void onEntityToggleGlideEvent(EntityToggleGlideEvent event) {
 		Entity entity = event.getEntity();
-		if (entity instanceof Player player)
-		{
-			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
-			if (this.sessionManager.hasBypass(localPlayer, localPlayer.getWorld()))
-			{
-				return;
-			}
 
-			ForcedStateFlag.ForcedState state = this.regionContainer.createQuery().queryValue(localPlayer.getLocation(), localPlayer, Flags.GLIDE);
-			switch (state)
-			{
-				case ALLOW:
-					break;
-				case DENY:
-				{
-					if (!event.isGliding())
-					{
-						return;
-					}
-
-					event.setCancelled(true);
-
-					//Prevent the player from being allowed to glide by spamming space
-					WorldGuardUtils.getScheduler().getScheduler().teleportAsync(entity, player.getLocation());
-
-					break;
+		if (entity instanceof Player player) {
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+				LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
+				if (this.sessionManager.hasBypass(localPlayer, localPlayer.getWorld())) {
+					return;
 				}
-				case FORCE:
-				{
-					if (event.isGliding())
-					{
-						return;
+
+				ForcedStateFlag.ForcedState state = this.regionContainer.createQuery().queryValue(localPlayer.getLocation(), localPlayer, Flags.GLIDE);
+				switch (state) {
+					case ALLOW:
+						break;
+					case DENY: {
+						if (!event.isGliding()) {
+							return;
+						}
+
+						Bukkit.getScheduler().runTask(plugin, () -> {
+							event.setCancelled(true);
+						});
+
+						//Prevent the player from being allowed to glide by spamming space
+						WorldGuardUtils.getScheduler().getScheduler().teleportAsync(entity, player.getLocation());
+
+						break;
 					}
+					case FORCE: {
+						if (event.isGliding()) {
+							return;
+						}
 
-					event.setCancelled(true);
+						Bukkit.getScheduler().runTask(plugin, () -> {
+							event.setCancelled(true);
+						});
 
-					break;
+						break;
+					}
+					case null:
+						break;
 				}
-                case null:
-                    break;
-            }
+			});
 		}
 	}
 }
