@@ -178,10 +178,10 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerItemDamageEvent(PlayerItemDamageEvent event) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			Player player = event.getPlayer();
-			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
+		Player player = event.getPlayer();
+		LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
 
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			if (this.regionContainer.createQuery().queryState(localPlayer.getLocation(), localPlayer, Flags.ITEM_DURABILITY) == State.DENY) {
 				Bukkit.getScheduler().runTask(plugin, () -> {
 					event.setCancelled(true);
@@ -192,10 +192,10 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerSpawnLocationEvent(PlayerSpawnLocationEvent event) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			Player player = event.getPlayer();
 			LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			Location location = this.regionContainer.createQuery().queryValue(BukkitAdapter.adapt(event.getSpawnLocation()), localPlayer, Flags.JOIN_LOCATION);
 			if (location != null) {
 				event.setSpawnLocation(BukkitAdapter.adapt(location));
@@ -215,7 +215,6 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			Player player = event.getPlayer();
 
 			//Some plugins toggle flight off on world change based on permissions,
@@ -224,6 +223,5 @@ public class PlayerListener implements Listener {
 			if (value != null) {
 				player.setAllowFlight(value);
 			}
-		});
 	}
 }
