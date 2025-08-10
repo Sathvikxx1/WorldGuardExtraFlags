@@ -6,6 +6,7 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.session.SessionManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,39 +57,35 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerDeathEvent(PlayerDeathEvent event)
-	{
-		Player player = event.getEntity();
+	public void onPlayerDeathEvent(PlayerDeathEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getEntity();
 
-		LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
-		ApplicableRegionSet regions = this.regionContainer.createQuery().getApplicableRegions(localPlayer.getLocation());
-		
-		Boolean keepInventory = regions.queryValue(localPlayer, Flags.KEEP_INVENTORY);
-		if (keepInventory != null)
-		{
-			event.setKeepInventory(keepInventory);
-			
-			if (keepInventory)
-			{
-				event.getDrops().clear();
-			}
-		}
-		
-		Boolean keepExp = regions.queryValue(localPlayer, Flags.KEEP_EXP);
-		if (keepExp != null)
-		{
-			event.setKeepLevel(keepExp);
+			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
+			ApplicableRegionSet regions = this.regionContainer.createQuery().getApplicableRegions(localPlayer.getLocation());
 
-			if (keepExp)
-			{
-				event.setDroppedExp(0);
+			Boolean keepInventory = regions.queryValue(localPlayer, Flags.KEEP_INVENTORY);
+			if (keepInventory != null) {
+				event.setKeepInventory(keepInventory);
+
+				if (keepInventory) {
+					event.getDrops().clear();
+				}
 			}
-		}
+
+			Boolean keepExp = regions.queryValue(localPlayer, Flags.KEEP_EXP);
+			if (keepExp != null) {
+				event.setKeepLevel(keepExp);
+
+				if (keepExp) {
+					event.setDroppedExp(0);
+				}
+			}
+		});
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event)
-	{
+	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 
 		LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
@@ -108,44 +105,40 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onPlayerRespawnEvent(PlayerRespawnEvent event)
-	{
-		Player player = event.getPlayer();
-		LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
-		
-		Location respawnLocation = this.regionContainer.createQuery().queryValue(localPlayer.getLocation(), localPlayer, Flags.RESPAWN_LOCATION);
-		if (respawnLocation != null)
-		{
-			event.setRespawnLocation(BukkitAdapter.adapt(respawnLocation));
-		}
+	public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getPlayer();
+			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
+
+			Location respawnLocation = this.regionContainer.createQuery().queryValue(localPlayer.getLocation(), localPlayer, Flags.RESPAWN_LOCATION);
+			if (respawnLocation != null) {
+				event.setRespawnLocation(BukkitAdapter.adapt(respawnLocation));
+			}
+		});
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent event)
-	{
-		Player player = event.getPlayer();
-		
-		ItemMeta itemMeta = event.getItem().getItemMeta();
-		if (itemMeta instanceof PotionMeta potionMeta)
-		{
-			List<PotionEffect> effects = new ArrayList<>();
-			if (potionMeta.getBasePotionType() != null)
-			{
-				effects.addAll(potionMeta.getBasePotionType().getPotionEffects());
-			}
+	public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getPlayer();
 
-			effects.addAll(potionMeta.getCustomEffects());
+			ItemMeta itemMeta = event.getItem().getItemMeta();
+			if (itemMeta instanceof PotionMeta potionMeta) {
+				List<PotionEffect> effects = new ArrayList<>();
+				if (potionMeta.getBasePotionType() != null) {
+					effects.addAll(potionMeta.getBasePotionType().getPotionEffects());
+				}
 
-			this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(GiveEffectsFlagHandler.class).drinkPotion(player, effects);
-		}
-		else
-		{
-			Material material = event.getItem().getType();
-			if (material == Material.MILK_BUCKET)
-			{
-				this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(GiveEffectsFlagHandler.class).drinkMilk(player);
+				effects.addAll(potionMeta.getCustomEffects());
+
+				this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(GiveEffectsFlagHandler.class).drinkPotion(player, effects);
+			} else {
+				Material material = event.getItem().getType();
+				if (material == Material.MILK_BUCKET) {
+					this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(GiveEffectsFlagHandler.class).drinkMilk(player);
+				}
 			}
-		}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -168,8 +161,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 	
-	private void checkFlyStatus(Player player, Boolean originalValueOverwrite)
-	{
+	private void checkFlyStatus(Player player, Boolean originalValueOverwrite) {
 		FlyFlagHandler flyFlagHandler = this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(FlyFlagHandler.class);
 
 		Boolean currentValue = flyFlagHandler.getCurrentValue();
@@ -185,53 +177,51 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerItemDamageEvent(PlayerItemDamageEvent event)
-	{
-		Player player = event.getPlayer();
-		LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
+	public void onPlayerItemDamageEvent(PlayerItemDamageEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getPlayer();
+			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
 
-		if (this.regionContainer.createQuery().queryState(localPlayer.getLocation(), localPlayer, Flags.ITEM_DURABILITY) == State.DENY)
-		{
-			event.setCancelled(true);
-		}
+			if (this.regionContainer.createQuery().queryState(localPlayer.getLocation(), localPlayer, Flags.ITEM_DURABILITY) == State.DENY) {
+				event.setCancelled(true);
+			}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerSpawnLocationEvent(PlayerSpawnLocationEvent event)
-	{
-		Player player = event.getPlayer();
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+	public void onPlayerSpawnLocationEvent(PlayerSpawnLocationEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getPlayer();
+			LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
-		Location location = this.regionContainer.createQuery().queryValue(BukkitAdapter.adapt(event.getSpawnLocation()), localPlayer, Flags.JOIN_LOCATION);
-		if (location != null)
-		{
-			event.setSpawnLocation(BukkitAdapter.adapt(location));
-		}
+			Location location = this.regionContainer.createQuery().queryValue(BukkitAdapter.adapt(event.getSpawnLocation()), localPlayer, Flags.JOIN_LOCATION);
+			if (location != null) {
+				event.setSpawnLocation(BukkitAdapter.adapt(location));
+			}
+		});
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoinEvent(PlayerJoinEvent event)
 	{
 		Player player = event.getPlayer();
-		
 		Boolean value = this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(FlyFlagHandler.class).getCurrentValue();
-		if (value != null)
-		{
+		if (value != null) {
 			player.setAllowFlight(value);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event)
-	{
-		Player player = event.getPlayer();
+	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			Player player = event.getPlayer();
 
-		//Some plugins toggle flight off on world change based on permissions,
-		//so we need to make sure to force the flight status.
-		Boolean value = this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(FlyFlagHandler.class).getCurrentValue();
-		if (value != null)
-		{
-			player.setAllowFlight(value);
-		}
+			//Some plugins toggle flight off on world change based on permissions,
+			//so we need to make sure to force the flight status.
+			Boolean value = this.sessionManager.get(this.worldGuardPlugin.wrapPlayer(player)).getHandler(FlyFlagHandler.class).getCurrentValue();
+			if (value != null) {
+				player.setAllowFlight(value);
+			}
+		});
 	}
 }

@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import net.goldtreeservers.worldguardextraflags.flags.Flags;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -43,20 +44,18 @@ public class WorldListener implements Listener
 		this.doUnloadChunkFlagCheck(world, chunk);
 	}
 
-	private void doUnloadChunkFlagCheck(org.bukkit.World world, Chunk chunk)
-	{
-		RegionManager regionManager = this.regionContainer.get(BukkitAdapter.adapt(world));
-		if (regionManager == null)
-		{
-			return;
-		}
-
-		for (ProtectedRegion region : regionManager.getApplicableRegions(new ProtectedCuboidRegion("UnloadChunkFlagTester", BlockVector3.at(chunk.getX() * 16, world.getMinHeight(), chunk.getZ() * 16), BlockVector3.at(chunk.getX() * 16 + 15, world.getMaxHeight(), chunk.getZ() * 16 + 15))))
-		{
-			if (region.getFlag(Flags.CHUNK_UNLOAD) == StateFlag.State.DENY)
-			{
-				chunk.addPluginChunkTicket(this.plugin);
+	private void doUnloadChunkFlagCheck(org.bukkit.World world, Chunk chunk) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			RegionManager regionManager = this.regionContainer.get(BukkitAdapter.adapt(world));
+			if (regionManager == null) {
+				return;
 			}
-		}
+
+			for (ProtectedRegion region : regionManager.getApplicableRegions(new ProtectedCuboidRegion("UnloadChunkFlagTester", BlockVector3.at(chunk.getX() * 16, world.getMinHeight(), chunk.getZ() * 16), BlockVector3.at(chunk.getX() * 16 + 15, world.getMaxHeight(), chunk.getZ() * 16 + 15)))) {
+				if (region.getFlag(Flags.CHUNK_UNLOAD) == StateFlag.State.DENY) {
+					chunk.addPluginChunkTicket(this.plugin);
+				}
+			}
+		});
 	}
 }

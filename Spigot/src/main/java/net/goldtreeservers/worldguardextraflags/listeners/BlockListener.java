@@ -27,8 +27,7 @@ public class BlockListener implements Listener
 	private final SessionManager sessionManager;
 	
 	@EventHandler(ignoreCancelled = true)
-	public void onEntityBlockFormEvent(EntityBlockFormEvent event)
-	{
+	public void onEntityBlockFormEvent(EntityBlockFormEvent event) {
 		BlockState newState = event.getNewState();
 		if (newState.getType() == Material.FROSTED_ICE)
 		{
