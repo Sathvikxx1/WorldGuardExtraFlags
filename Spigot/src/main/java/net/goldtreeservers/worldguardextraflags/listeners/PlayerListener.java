@@ -183,7 +183,9 @@ public class PlayerListener implements Listener {
 			LocalPlayer localPlayer = this.worldGuardPlugin.wrapPlayer(player);
 
 			if (this.regionContainer.createQuery().queryState(localPlayer.getLocation(), localPlayer, Flags.ITEM_DURABILITY) == State.DENY) {
-				event.setCancelled(true);
+				Bukkit.getScheduler().runTask(plugin, () -> {
+					event.setCancelled(true);
+				});
 			}
 		});
 	}
